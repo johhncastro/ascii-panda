@@ -1,3 +1,3 @@
 # ascii-panda
 
-rotating panda. open `index.html` or `npx serve .`
+rotating panda. `npm run dev`

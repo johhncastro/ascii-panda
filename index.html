@@ -12,6 +12,21 @@
     <div class="label">ASCII Panda</div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+  <script>
+    // Wait for FBXLoader to be available
+    window.addEventListener('load', function() {
+      if (typeof THREE.FBXLoader === 'undefined') {
+        console.error('FBXLoader not loaded. Trying alternative CDN...');
+        const script = document.createElement('script');
+        script.src = 'https://threejs.org/examples/js/loaders/FBXLoader.js';
+        document.head.appendChild(script);
+        script.onload = function() {
+          console.log('FBXLoader loaded from alternative CDN');
+        };
+      }
+    });
+  </script>
   <script src="panda.js" defer></script>
 </body>
 </html>
