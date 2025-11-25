@@ -1,147 +1,133 @@
-// ASCII Panda 3D Rotation Animation
-// Converts a 2D panda mask into 3D points and rotates them with perspective
+// Three.js Panda 3D Rotation Animation
 
 // Panda mask definition
 const pandaMask = [
-  "        ####        ",
-  "      ########      ",
-  "     ###    ###     ",
-  "    ##  ##  ##      ",
-  "   ##  ####  ##     ",
-  "   ##  ####  ##     ",
-  "   ##        ##     ",
-  "   ### #### ###     ",
-  "    ##########      ",
-  "      ######        ",
-  "     ##    ##       ",
-  "    ##      ##      ",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⡗⠀⠀⠉⠑⢢⣴⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡶⢢⠀⠀⠀⠀⠀⠀⠀⠀⠻⠋⠀⠀⠀⠀⠀⢿⣿⠿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠳⢝⢧⡀⠀⠀⠀⠀⠀⢠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣄⠙⠄⠀⠀⠀⢀⠇⢠⡄⠀⠀⣄⡀⠀⠀⠀⣴⣄⠘⡀⠀⠀⠀⠀⠀⠀⠀⣀⣤⡴⠶⢚⣫⣵⡶⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⡅⣤⣀⠃⠀⠘⠀⢿⠇⠀⠸⣿⣿⡄⠀⠀⣿⣿⣷⣷⣄⠀⠀⠀⠀⣀⣸⣿⡀⠸⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⠛⠁⣹⣿⣷⣦⣤⣶⡄⢀⣀⠀⠙⠋⠁⣠⣾⣿⣿⣿⣿⣿⣿⣾⣿⣿⣿⣿⣿⡟⢰⣿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⣾⣿⣿⣿⣿⣿⣿⣿⣌⣋⣀⣀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣈⣯⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡿⠟⠿⣿⣿⠿⠛⠁⠀⠀⠀⠀⠈⢿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡔⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⣀⣠⣾⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⡿⠛⠒⠚⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢼⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠛⠛⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠈⠙⠻⠿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
 ];
 
-// ASCII characters for depth shading (lightest to darkest)
-const asciiChars = " .:-=+*#%@";
-
-// Grid dimensions for output
-const GRID_WIDTH = 60;
-const GRID_HEIGHT = 30;
-
-// 3D projection settings
-const DISTANCE = 4;
-const BASE_SCALE = 15;
-
-// Animation state
-let angleX = 0;
-let angleY = 0;
-
-// Convert panda mask to 3D points
-function maskToPoints(mask) {
-  const points = [];
+// Convert panda mask to canvas texture
+function createPandaTexture(mask) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Calculate dimensions
   const rows = mask.length;
   const cols = mask[0].length;
+  const cellSize = 8; // Size of each character cell
+  canvas.width = cols * cellSize;
+  canvas.height = rows * cellSize;
   
+  // Set up canvas
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#00ff00';
+  ctx.font = `${cellSize}px monospace`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  
+  // Draw the mask
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      if (mask[row][col] !== ' ') {
-        // Normalize coordinates to [-1, 1]
-        const x = (col / (cols - 1)) * 2 - 1;
-        const y = (row / (rows - 1)) * 2 - 1;
-        points.push({ x, y, z: 0 });
+      const char = mask[row][col];
+      const BRAILLE_SPACE = '\u2800';
+      if (char && char !== ' ' && char !== BRAILLE_SPACE) {
+        ctx.fillText(char, col * cellSize, row * cellSize);
       }
     }
   }
   
-  return points;
+  return canvas;
 }
 
-// Rotate a point around X and Y axes
-function rotatePoint(p, ax, ay) {
-  // Rotate around Y axis
-  const cosY = Math.cos(ay);
-  const sinY = Math.sin(ay);
-  const x1 = p.x * cosY - p.z * sinY;
-  const z1 = p.x * sinY + p.z * cosY;
+// Initialize Three.js scene
+function init() {
+  const canvas = document.getElementById('panda-canvas');
+  const width = window.innerWidth;
+  const height = window.innerHeight;
   
-  // Rotate around X axis
-  const cosX = Math.cos(ax);
-  const sinX = Math.sin(ax);
-  const y1 = p.y * cosX - z1 * sinX;
-  const z2 = p.y * sinX + z1 * cosX;
+  // Scene setup
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
   
-  return { x: x1, y: y1, z: z2 };
-}
-
-// Project 3D point to 2D screen coordinates with perspective
-function projectPoint(p) {
-  const z2 = p.z + DISTANCE;
-  if (z2 <= 0) return null; // Behind camera
+  // Camera setup
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+  camera.position.z = 5;
   
-  const scale = BASE_SCALE / z2;
-  const screenX = p.x * scale + GRID_WIDTH / 2;
-  const screenY = p.y * scale + GRID_HEIGHT / 2;
+  // Renderer setup
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(window.devicePixelRatio);
   
-  return {
-    x: Math.round(screenX),
-    y: Math.round(screenY),
-    z: z2
-  };
-}
-
-// Convert depth to ASCII character
-function depthToChar(z) {
-  // Normalize depth to [0, 1] range
-  // Closer points have smaller z values (after DISTANCE offset)
-  const normalized = Math.max(0, Math.min(1, (z - 2) / 4));
-  const index = Math.floor(normalized * (asciiChars.length - 1));
-  return asciiChars[index];
-}
-
-// Render the panda
-function render() {
-  const canvas = document.getElementById('ascii-panda');
+  // Create panda texture
+  const textureCanvas = createPandaTexture(pandaMask);
+  const texture = new THREE.CanvasTexture(textureCanvas);
+  texture.needsUpdate = true;
   
-  // Update rotation angles (gentle wobble, not full spin)
-  angleX += 0.015;
-  angleY += 0.02;
-  
-  const rotX = Math.sin(angleX) * 0.4;
-  const rotY = Math.sin(angleY) * 0.6;
-  
-  // Convert mask to points
-  const points = maskToPoints(pandaMask);
-  
-  // Create grid for rendering
-  const grid = Array(GRID_HEIGHT).fill(null).map(() => 
-    Array(GRID_WIDTH).fill(' ')
-  );
-  
-  // Rotate and project each point
-  points.forEach(point => {
-    const rotated = rotatePoint(point, rotX, rotY);
-    const projected = projectPoint(rotated);
-    
-    if (projected && 
-        projected.x >= 0 && projected.x < GRID_WIDTH &&
-        projected.y >= 0 && projected.y < GRID_HEIGHT) {
-      const char = depthToChar(projected.z);
-      // Use stronger character if multiple points map to same cell
-      const current = grid[projected.y][projected.x];
-      const currentIndex = asciiChars.indexOf(current);
-      const newIndex = asciiChars.indexOf(char);
-      if (newIndex > currentIndex) {
-        grid[projected.y][projected.x] = char;
-      }
-    }
+  // Create material with the texture
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    color: 0x00ff00,
+    side: THREE.DoubleSide
   });
   
-  // Convert grid to string
-  const output = grid.map(row => row.join('')).join('\n');
-  canvas.textContent = output;
+  // Create box geometry with thickness
+  const aspect = textureCanvas.width / textureCanvas.height;
+  const pandaWidth = aspect * 3;
+  const pandaHeight = 3;
+  const pandaDepth = 0.3; // Thickness of the panda
+  const boxGeometry = new THREE.BoxGeometry(pandaWidth, pandaHeight, pandaDepth);
   
-  // Continue animation
-  requestAnimationFrame(render);
+  // Apply texture to all faces
+  const panda = new THREE.Mesh(boxGeometry, material);
+  scene.add(panda);
+  
+  // Set initial tilt (like Earth's axial tilt)
+  panda.rotation.x = -0.4; // Slight tilt
+  
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+    
+    // Continuous rotation around Y axis (like Earth spinning)
+    panda.rotation.y += 0.01;
+    
+    renderer.render(scene, camera);
+  }
+  
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newWidth, newHeight);
+  });
+  
+  // Start animation
+  animate();
 }
 
-// Start animation when page loads
-window.addEventListener('DOMContentLoaded', () => {
-  render();
-});
-
+// Start when DOM is ready
+window.addEventListener('DOMContentLoaded', init);

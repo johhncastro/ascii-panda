@@ -1,10 +1,12 @@
 body {
   margin: 0;
+  padding: 0;
   background: #000;
   color: #0f0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont,
     "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
+  overflow: hidden;
 }
 
 .app {
@@ -13,18 +15,21 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  position: relative;
 }
 
-#ascii-panda {
-  font-size: 10px;
-  line-height: 0.8;
-  white-space: pre;
+#panda-canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
 }
 
 .label {
-  margin-top: 2em;
+  position: absolute;
+  bottom: 20px;
   font-size: 12px;
   color: #033;
   opacity: 0.3;
+  pointer-events: none;
 }
 
